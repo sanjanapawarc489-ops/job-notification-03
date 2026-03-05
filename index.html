@@ -1,0 +1,1161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Notification App</title>
+    <style>
+        /* ==========================================
+           DESIGN SYSTEM FOUNDATION
+           ========================================== */
+
+        /* RESET & BASE */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            font-size: 16px;
+        }
+
+        body {
+            background-color: #F7F6F3;
+            color: #111111;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvet', sans-serif;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* ==========================================
+           COLOR SYSTEM
+           ========================================== */
+        :root {
+            /* Core palette */
+            --color-background: #F7F6F3;
+            --color-text-primary: #111111;
+            --color-text-secondary: #555555;
+            --color-text-tertiary: #888888;
+            --color-accent: #8B0000;
+            --color-success: #2D5E3F;
+            --color-warning: #B8860B;
+            --color-error: #8B3A3A;
+            
+            /* Surfaces */
+            --color-surface-white: #FFFFFF;
+            --color-border: #E5E2DB;
+            --color-border-focus: #111111;
+            
+            /* State colors */
+            --color-disabled: #D1CCBF;
+            --color-hover: #EEE9DE;
+            
+            /* Spacing scale (DO NOT use other values) */
+            --space-1: 8px;
+            --space-2: 16px;
+            --space-3: 24px;
+            --space-4: 40px;
+            --space-5: 64px;
+            
+            /* Typography */
+            --font-serif: 'Georgia', 'Garamond', serif;
+            --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica', sans-serif;
+            
+            /* Transitions */
+            --transition-standard: 150ms ease-in-out;
+            --transition-long: 200ms ease-in-out;
+        }
+
+        /* ==========================================
+           TYPOGRAPHY SYSTEM
+           ========================================== */
+        
+        h1 {
+            font-family: var(--font-serif);
+            font-size: 48px;
+            line-height: 1.2;
+            font-weight: 700;
+            color: var(--color-text-primary);
+            margin-bottom: var(--space-2);
+            letter-spacing: -0.5px;
+        }
+
+        h2 {
+            font-family: var(--font-serif);
+            font-size: 36px;
+            line-height: 1.3;
+            font-weight: 700;
+            color: var(--color-text-primary);
+            margin-bottom: var(--space-3);
+            letter-spacing: -0.3px;
+        }
+
+        h3 {
+            font-family: var(--font-serif);
+            font-size: 28px;
+            line-height: 1.4;
+            font-weight: 700;
+            color: var(--color-text-primary);
+            margin-bottom: var(--space-2);
+        }
+
+        h4 {
+            font-family: var(--font-sans);
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--color-text-primary);
+            margin-bottom: var(--space-2);
+            letter-spacing: 0;
+        }
+
+        p {
+            font-family: var(--font-sans);
+            font-size: 16px;
+            line-height: 1.8;
+            color: var(--color-text-primary);
+            margin-bottom: var(--space-2);
+            max-width: 720px;
+        }
+
+        .text-secondary {
+            color: var(--color-text-secondary);
+        }
+
+        .text-tertiary {
+            color: var(--color-text-tertiary);
+        }
+
+        small {
+            font-size: 14px;
+            line-height: 1.6;
+            color: var(--color-text-secondary);
+        }
+
+        /* ==========================================
+           LAYOUT STRUCTURE
+           ========================================== */
+
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* TOP BAR */
+        .top-bar {
+            background-color: var(--color-surface-white);
+            border-bottom: 1px solid var(--color-border);
+            padding: var(--space-2) var(--space-4);
+            
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: var(--space-4);
+            
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .top-bar-left {
+            font-family: var(--font-serif);
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--color-text-primary);
+        }
+
+        .top-bar-center {
+            font-size: 14px;
+            color: var(--color-text-secondary);
+            text-align: center;
+        }
+
+        .top-bar-right {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-1);
+            padding: 6px var(--space-2);
+            border-radius: 4px;
+            font-size: 13px;
+            font-weight: 500;
+            background-color: var(--color-hover);
+            color: var(--color-text-secondary);
+        }
+
+        .status-badge.in-progress {
+            background-color: #E8F5E9;
+            color: var(--color-success);
+        }
+
+        .status-badge.shipped {
+            background-color: #FFF3E0;
+            color: var(--color-warning);
+        }
+
+        /* STATUS INDICATOR DOT */
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: var(--color-text-secondary);
+        }
+
+        .status-dot.in-progress {
+            background-color: var(--color-success);
+            animation: pulse 2s infinite;
+        }
+
+        .status-dot.shipped {
+            background-color: var(--color-warning);
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+
+        /* CONTEXT HEADER */
+        .context-header {
+            background-color: var(--color-surface-white);
+            padding: var(--space-4);
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .context-header h1 {
+            margin-bottom: var(--space-1);
+        }
+
+        .context-header-subtext {
+            font-family: var(--font-sans);
+            font-size: 16px;
+            color: var(--color-text-secondary);
+            line-height: 1.6;
+        }
+
+        /* MAIN CONTENT CONTAINER */
+        .main-container {
+            display: flex;
+            flex: 1;
+            gap: var(--space-4);
+            padding: var(--space-4);
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        /* PRIMARY WORKSPACE (70%) */
+        .primary-workspace {
+            flex: 0 0 70%;
+        }
+
+        /* SECONDARY PANEL (30%) */
+        .secondary-panel {
+            flex: 0 0 30%;
+            background-color: var(--color-surface-white);
+            border: 1px solid var(--color-border);
+            border-radius: 4px;
+            padding: var(--space-3);
+            height: fit-content;
+            position: sticky;
+            top: 80px;
+        }
+
+        .secondary-panel h4 {
+            margin-bottom: var(--space-2);
+        }
+
+        /* PROOF FOOTER */
+        .proof-footer {
+            background-color: var(--color-surface-white);
+            border-top: 1px solid var(--color-border);
+            padding: var(--space-4);
+            margin-top: var(--space-5);
+        }
+
+        .proof-checklist {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--space-2);
+        }
+
+        .proof-item {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+            font-size: 14px;
+            color: var(--color-text-secondary);
+        }
+
+        .proof-item.completed {
+            color: var(--color-success);
+        }
+
+        .proof-checkbox {
+            width: 20px;
+            height: 20px;
+            border: 1px solid var(--color-border);
+            border-radius: 2px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            flex-shrink: 0;
+        }
+
+        .proof-item.completed .proof-checkbox {
+            border-color: var(--color-success);
+            background-color: var(--color-success);
+            color: var(--color-surface-white);
+        }
+
+        /* ==========================================
+           COMPONENT SYSTEM
+           ========================================== */
+
+        /* BUTTONS */
+        .btn {
+            font-family: var(--font-sans);
+            font-size: 16px;
+            font-weight: 500;
+            padding: 10px var(--space-3);
+            border-radius: 4px;
+            border: none;
+            cursor: pointer;
+            transition: all var(--transition-standard);
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-1);
+            text-decoration: none;
+            white-space: nowrap;
+        }
+
+        /* Primary Button */
+        .btn-primary {
+            background-color: var(--color-accent);
+            color: var(--color-surface-white);
+        }
+
+        .btn-primary:hover {
+            background-color: #6B0000;
+        }
+
+        .btn-primary:active {
+            background-color: #5A0000;
+        }
+
+        .btn-primary:disabled {
+            background-color: var(--color-disabled);
+            color: var(--color-text-tertiary);
+            cursor: not-allowed;
+        }
+
+        /* Secondary Button */
+        .btn-secondary {
+            background-color: transparent;
+            color: var(--color-text-primary);
+            border: 1px solid var(--color-border);
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--color-hover);
+            border-color: var(--color-text-primary);
+        }
+
+        .btn-secondary:active {
+            background-color: #E5DFD0;
+        }
+
+        /* Link Button */
+        .btn-link {
+            background-color: transparent;
+            color: var(--color-accent);
+            padding: 0;
+            text-decoration: underline;
+        }
+
+        .btn-link:hover {
+            color: #6B0000;
+        }
+
+        /* Button States */
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* CARDS */
+        .card {
+            background-color: var(--color-surface-white);
+            border: 1px solid var(--color-border);
+            border-radius: 4px;
+            padding: var(--space-3);
+            transition: border-color var(--transition-standard);
+        }
+
+        .card:hover {
+            border-color: var(--color-text-secondary);
+        }
+
+        .card-title {
+            font-family: var(--font-sans);
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--color-text-primary);
+            margin-bottom: var(--space-2);
+        }
+
+        .card-content {
+            font-size: 16px;
+            line-height: 1.8;
+            color: var(--color-text-secondary);
+        }
+
+        /* INPUT FIELDS */
+        input[type="text"],
+        input[type="email"],
+        input[type="password"],
+        input[type="number"],
+        textarea,
+        select {
+            font-family: var(--font-sans);
+            font-size: 16px;
+            width: 100%;
+            padding: 10px var(--space-2);
+            border: 1px solid var(--color-border);
+            border-radius: 4px;
+            background-color: var(--color-surface-white);
+            color: var(--color-text-primary);
+            transition: all var(--transition-standard);
+            line-height: 1.6;
+        }
+
+        input[type="text"]::placeholder,
+        input[type="email"]::placeholder,
+        input[type="password"]::placeholder,
+        input[type="number"]::placeholder,
+        textarea::placeholder {
+            color: var(--color-text-tertiary);
+        }
+
+        input:focus,
+        textarea:focus,
+        select:focus {
+            outline: none;
+            border-color: var(--color-accent);
+            box-shadow: inset 0 0 0 1px var(--color-accent);
+            background-color: var(--color-surface-white);
+        }
+
+        input:disabled,
+        textarea:disabled,
+        select:disabled {
+            background-color: var(--color-hover);
+            color: var(--color-text-tertiary);
+            cursor: not-allowed;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        /* FORM GROUPS */
+        .form-group {
+            margin-bottom: var(--space-3);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--color-text-primary);
+            margin-bottom: var(--space-1);
+        }
+
+        .form-help {
+            font-size: 13px;
+            color: var(--color-text-tertiary);
+            margin-top: var(--space-1);
+        }
+
+        /* ERROR STATE */
+        .form-error {
+            border-color: var(--color-error) !important;
+        }
+
+        .form-error:focus {
+            box-shadow: inset 0 0 0 1px var(--color-error) !important;
+            border-color: var(--color-error) !important;
+        }
+
+        .error-message {
+            font-size: 13px;
+            color: var(--color-error);
+            margin-top: var(--space-1);
+        }
+
+        /* ERROR BOX */
+        .error-box {
+            background-color: #FEE8E8;
+            border: 1px solid #E5B3B3;
+            border-radius: 4px;
+            padding: var(--space-3);
+            margin-bottom: var(--space-3);
+        }
+
+        .error-box h4 {
+            color: var(--color-error);
+            margin-bottom: var(--space-1);
+        }
+
+        .error-box p {
+            color: var(--color-error);
+            margin-bottom: 0;
+        }
+
+        /* EMPTY STATE */
+        .empty-state {
+            text-align: center;
+            padding: var(--space-5) var(--space-4);
+            background-color: var(--color-surface-white);
+            border: 1px solid var(--color-border);
+            border-radius: 4px;
+        }
+
+        .empty-state h3 {
+            color: var(--color-text-secondary);
+            margin-bottom: var(--space-2);
+        }
+
+        .empty-state p {
+            color: var(--color-text-tertiary);
+            margin: 0 auto var(--space-3);
+        }
+
+        /* SUCCESS STATE */
+        .success-box {
+            background-color: #E8F5E9;
+            border: 1px solid #A8D5BA;
+            border-radius: 4px;
+            padding: var(--space-3);
+            margin-bottom: var(--space-3);
+        }
+
+        .success-box h4 {
+            color: var(--color-success);
+            margin-bottom: var(--space-1);
+        }
+
+        .success-box p {
+            color: var(--color-success);
+            margin-bottom: 0;
+        }
+
+        /* TAGS & BADGES */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-1);
+            padding: 4px var(--space-2);
+            border-radius: 4px;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .badge-default {
+            background-color: var(--color-hover);
+            color: var(--color-text-secondary);
+        }
+
+        .badge-accent {
+            background-color: #FFE8E8;
+            color: var(--color-accent);
+        }
+
+        .badge-success {
+            background-color: #E8F5E9;
+            color: var(--color-success);
+        }
+
+        /* CODE / PROMPT BOX */
+        .code-box {
+            background-color: #FAFAF9;
+            border: 1px solid var(--color-border);
+            border-radius: 4px;
+            padding: var(--space-2);
+            font-family: 'Monaco', 'Menlo', 'Courier New', monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            color: var(--color-text-secondary);
+            overflow-x: auto;
+            margin-bottom: var(--space-3);
+        }
+
+        .code-box-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--color-text-tertiary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: var(--space-1);
+        }
+
+        /* DIVIDERS */
+        hr {
+            border: none;
+            border-top: 1px solid var(--color-border);
+            margin: var(--space-3) 0;
+        }
+
+        /* LISTS */
+        ul, ol {
+            margin-left: var(--space-3);
+            margin-bottom: var(--space-2);
+        }
+
+        li {
+            margin-bottom: var(--space-1);
+            line-height: 1.8;
+        }
+
+        /* DEMO SECTION STYLES */
+        .demo-section {
+            margin-bottom: var(--space-5);
+        }
+
+        .demo-section h2 {
+            margin-top: var(--space-4);
+            margin-bottom: var(--space-3);
+            padding-bottom: var(--space-2);
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .component-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: var(--space-3);
+            margin-bottom: var(--space-3);
+        }
+
+        .component-example {
+            padding: var(--space-3);
+            background-color: var(--color-surface-white);
+            border: 1px solid var(--color-border);
+            border-radius: 4px;
+        }
+
+        .component-example-label {
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--color-text-tertiary);
+            margin-bottom: var(--space-2);
+        }
+
+        /* ==========================================
+           NAVIGATION SYSTEM
+           ========================================== */
+
+        .nav-container {
+            background-color: var(--color-surface-white);
+            border-bottom: 1px solid var(--color-border);
+            padding: 0 var(--space-4);
+            display: flex;
+            align-items: center;
+            gap: var(--space-4);
+            min-height: 56px;
+        }
+
+        .nav-brand {
+            font-family: var(--font-serif);
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--color-text-primary);
+            margin-right: var(--space-4);
+            text-decoration: none;
+            white-space: nowrap;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: var(--space-3);
+            flex: 1;
+        }
+
+        .nav-link {
+            font-family: var(--font-sans);
+            font-size: 16px;
+            color: var(--color-text-primary);
+            text-decoration: none;
+            padding: var(--space-2) 0;
+            border-bottom: 2px solid transparent;
+            transition: border-color var(--transition-standard);
+            cursor: pointer;
+        }
+
+        .nav-link:hover {
+            border-bottom-color: var(--color-accent);
+        }
+
+        .nav-link.active {
+            border-bottom-color: var(--color-accent);
+            color: var(--color-accent);
+        }
+
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            background: none;
+            border: none;
+            cursor: pointer;
+            gap: 6px;
+            margin-left: auto;
+            padding: 0;
+        }
+
+        .hamburger span {
+            width: 24px;
+            height: 2px;
+            background-color: var(--color-text-primary);
+            border-radius: 1px;
+            transition: all var(--transition-standard);
+        }
+
+        .hamburger.active span:nth-child(1) {
+            transform: rotate(45deg) translate(8px, 8px);
+        }
+
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .hamburger.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(7px, -7px);
+        }
+
+        .mobile-menu {
+            display: none;
+            position: absolute;
+            top: 56px;
+            left: 0;
+            right: 0;
+            background-color: var(--color-surface-white);
+            border-bottom: 1px solid var(--color-border);
+            flex-direction: column;
+            padding: var(--space-3);
+            gap: var(--space-2);
+            z-index: 99;
+        }
+
+        .mobile-menu.active {
+            display: flex;
+        }
+
+        .mobile-menu .nav-link {
+            padding: var(--space-2);
+            border-bottom: none;
+            border-left: 2px solid transparent;
+            padding-left: var(--space-3);
+        }
+
+        .mobile-menu .nav-link:hover {
+            border-left-color: var(--color-accent);
+            border-bottom: none;
+        }
+
+        .mobile-menu .nav-link.active {
+            border-left-color: var(--color-accent);
+            border-bottom: none;
+        }
+
+        /* ==========================================
+           HERO / LANDING SECTION
+           ========================================== */
+
+        .hero-container {
+            display: flex;
+            flex-direction: column;
+            min-height: calc(100vh - 56px);
+            justify-content: center;
+            align-items: center;
+            padding: var(--space-5) var(--space-4);
+            text-align: center;
+            background-color: var(--color-background);
+        }
+
+        .hero-headline {
+            font-family: var(--font-serif);
+            font-size: 48px;
+            line-height: 1.2;
+            font-weight: 700;
+            color: var(--color-text-primary);
+            max-width: 700px;
+            margin-bottom: var(--space-3);
+            letter-spacing: -0.5px;
+        }
+
+        .hero-subtext {
+            font-family: var(--font-sans);
+            font-size: 18px;
+            line-height: 1.8;
+            color: var(--color-text-secondary);
+            max-width: 600px;
+            margin-bottom: var(--space-5);
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .nav-container {
+                padding: 0 var(--space-3);
+                gap: var(--space-2);
+            }
+
+            .nav-brand {
+                margin-right: auto;
+                font-size: 18px;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .hamburger {
+                display: flex;
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .main-container {
+                flex-direction: column;
+            }
+
+            .primary-workspace {
+                flex: 1;
+            }
+
+            .secondary-panel {
+                flex: 1;
+                position: static;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .nav-container {
+                padding: 0 var(--space-2);
+            }
+
+            h1 {
+                font-size: 36px;
+            }
+
+            h2 {
+                font-size: 28px;
+            }
+
+            .context-header {
+                padding: var(--space-3);
+            }
+
+            .main-container {
+                padding: var(--space-2);
+                gap: var(--space-2);
+            }
+
+            .component-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- NAVIGATION SHELL -->
+    <nav class="nav-container">
+        <a href="/" class="nav-brand">Job Notification Tracker</a>
+        <ul class="nav-links">
+            <li><a href="/dashboard" class="nav-link" data-route="dashboard">Dashboard</a></li>
+            <li><a href="/saved" class="nav-link" data-route="saved">Saved</a></li>
+            <li><a href="/digest" class="nav-link" data-route="digest">Digest</a></li>
+            <li><a href="/settings" class="nav-link" data-route="settings">Settings</a></li>
+            <li><a href="/proof" class="nav-link" data-route="proof">Proof</a></li>
+        </ul>
+        <button class="hamburger" id="hamburger" aria-label="Toggle menu">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+    </nav>
+
+    <!-- MOBILE MENU -->
+    <div class="mobile-menu" id="mobileMenu">
+        <a href="/dashboard" class="nav-link" data-route="dashboard">Dashboard</a>
+        <a href="/saved" class="nav-link" data-route="saved">Saved</a>
+        <a href="/digest" class="nav-link" data-route="digest">Digest</a>
+        <a href="/settings" class="nav-link" data-route="settings">Settings</a>
+        <a href="/proof" class="nav-link" data-route="proof">Proof</a>
+    </div>
+
+    <!-- PAGE CONTENT -->
+    <main id="app"></main>
+
+    <script>
+        // ==========================================
+        // ROUTING ENGINE
+        // ==========================================
+
+        function renderHomePage() {
+            return `
+                <div class="hero-container">
+                    <h1 class="hero-headline">Stop Missing The Right Jobs.</h1>
+                    <p class="hero-subtext">Precision-matched job discovery delivered daily at 9AM.</p>
+                    <a href="/settings" class="btn btn-primary">Start Tracking</a>
+                </div>
+            `;
+        }
+
+        function renderDashboardPage() {
+            return `
+                <div class="context-header">
+                    <h1>Dashboard</h1>
+                    <p class="context-header-subtext">Track your job notifications in real time.</p>
+                </div>
+                <div style="padding: var(--space-4);">
+                    <div class="empty-state">
+                        <h3>No jobs yet</h3>
+                        <p>In the next step, you will load a realistic dataset.</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderSavedPage() {
+            return `
+                <div class="context-header">
+                    <h1>Saved</h1>
+                    <p class="context-header-subtext">Your collection of saved opportunities awaits.</p>
+                </div>
+                <div style="padding: var(--space-4);">
+                    <div class="empty-state">
+                        <h3>No saved jobs</h3>
+                        <p>Save jobs from your dashboard to build your personal collection.</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderDigestPage() {
+            return `
+                <div class="context-header">
+                    <h1>Digest</h1>
+                    <p class="context-header-subtext">Your daily summary of matched opportunities.</p>
+                </div>
+                <div style="padding: var(--space-4);">
+                    <div class="empty-state">
+                        <h3>Digest coming tomorrow</h3>
+                        <p>Once your preferences are set, your daily job digest will arrive at 9AM every morning.</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderSettingsPage() {
+            return `
+                <div class="context-header">
+                    <h1>Settings</h1>
+                    <p class="context-header-subtext">Customize your job notification preferences.</p>
+                </div>
+                <div style="padding: var(--space-4); max-width: 720px;">
+                    <div style="background-color: var(--color-surface-white); border: 1px solid var(--color-border); border-radius: 4px; padding: var(--space-4);">
+                        <div class="form-group">
+                            <label class="form-label">Role Keywords</label>
+                            <input type="text" placeholder="e.g. Senior Developer, Product Manager, Designer">
+                            <span class="form-help">Search for specific job titles or keywords to narrow your results.</span>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Preferred Locations</label>
+                            <input type="text" placeholder="e.g. San Francisco, New York, Remote">
+                            <span class="form-help">Enter cities or regions, or type 'Remote' for remote-only roles.</span>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Work Mode</label>
+                            <div style="display: flex; gap: var(--space-3); margin-top: var(--space-2);">
+                                <label style="display: flex; align-items: center; gap: var(--space-1); cursor: pointer; font-weight: normal;">
+                                    <input type="checkbox" style="cursor: pointer;">
+                                    <span>Remote</span>
+                                </label>
+                                <label style="display: flex; align-items: center; gap: var(--space-1); cursor: pointer; font-weight: normal;">
+                                    <input type="checkbox" style="cursor: pointer;">
+                                    <span>Hybrid</span>
+                                </label>
+                                <label style="display: flex; align-items: center; gap: var(--space-1); cursor: pointer; font-weight: normal;">
+                                    <input type="checkbox" style="cursor: pointer;">
+                                    <span>Onsite</span>
+                                </label>
+                            </div>
+                            <span class="form-help">Select the work arrangements you are open to.</span>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Experience Level</label>
+                            <select style="cursor: pointer;">
+                                <option value="">Select experience level...</option>
+                                <option value="entry">Entry Level (0-2 years)</option>
+                                <option value="mid">Mid Level (2-5 years)</option>
+                                <option value="senior">Senior (5-10 years)</option>
+                                <option value="lead">Lead / Staff (10+ years)</option>
+                            </select>
+                            <span class="form-help">Help us match jobs appropriate for your career stage.</span>
+                        </div>
+
+                        <button class="btn btn-primary" style="width: 100%; margin-top: var(--space-4);">Save Preferences</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderProofPage() {
+            return `
+                <div class="context-header">
+                    <h1>Proof</h1>
+                    <p class="context-header-subtext">Artifact collection and progress tracking.</p>
+                </div>
+            `;
+        }
+
+        function renderPage(path) {
+            const app = document.getElementById('app');
+            const hamburger = document.getElementById('hamburger');
+            const mobileMenu = document.getElementById('mobileMenu');
+
+            // Normalize path for file:// protocol  
+            const knownRoutes = ['/dashboard', '/saved', '/digest', '/settings', '/proof'];
+            let normalizedPath = '/';
+            
+            // Check if any known route is in the pathname
+            for (let route of knownRoutes) {
+                if (path.includes(route)) {
+                    normalizedPath = route;
+                    break;
+                }
+            }
+
+            // Close mobile menu when navigating
+            if (mobileMenu.classList.contains('active')) {
+                hamburger.classList.remove('active');
+                mobileMenu.classList.remove('active');
+            }
+
+            let content = '';
+            let pageTitle = 'Job Notification Tracker';
+
+            // Route handling
+            switch (normalizedPath) {
+                case '/':
+                    pageTitle = 'Home | Job Notification Tracker';
+                    content = renderHomePage();
+                    break;
+                case '/dashboard':
+                    pageTitle = 'Dashboard | Job Notification Tracker';
+                    content = renderDashboardPage();
+                    break;
+                case '/saved':
+                    pageTitle = 'Saved | Job Notification Tracker';
+                    content = renderSavedPage();
+                    break;
+                case '/digest':
+                    pageTitle = 'Digest | Job Notification Tracker';
+                    content = renderDigestPage();
+                    break;
+                case '/settings':
+                    pageTitle = 'Settings | Job Notification Tracker';
+                    content = renderSettingsPage();
+                    break;
+                case '/proof':
+                    pageTitle = 'Proof | Job Notification Tracker';
+                    content = renderProofPage();
+                    break;
+                default:
+                    pageTitle = 'Page Not Found | Job Notification Tracker';
+                    content = `
+                        <div class="context-header">
+                            <h1>Page Not Found</h1>
+                            <p class="context-header-subtext">The page you are looking for does not exist.</p>
+                        </div>
+                    `;
+            }
+
+            // Update page title
+            document.title = pageTitle;
+
+            // Update active nav link
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+
+            // Set active link for current route
+            if (normalizedPath !== '/') {
+                document.querySelectorAll('.nav-link').forEach(link => {
+                    if (link.getAttribute('href') === normalizedPath) {
+                        link.classList.add('active');
+                    }
+                });
+            }
+
+            // Render page content
+            app.innerHTML = content;
+        }
+
+        // ==========================================
+        // EVENT LISTENERS
+        // ==========================================
+
+        document.addEventListener('click', (event) => {
+            const target = event.target.closest('a[href^="/"]');
+            if (target) {
+                event.preventDefault();
+                const path = target.getAttribute('href');
+                window.history.pushState(null, '', path);
+                renderPage(path);
+            }
+        });
+
+        document.getElementById('hamburger').addEventListener('click', () => {
+            const hamburger = document.getElementById('hamburger');
+            const mobileMenu = document.getElementById('mobileMenu');
+            hamburger.classList.toggle('active');
+            mobileMenu.classList.toggle('active');
+        });
+
+        // Handle browser back/forward buttons
+        window.addEventListener('popstate', () => {
+            const path = window.location.pathname || '/';
+            renderPage(path);
+        });
+
+        // Initial page load
+        function init() {
+            const path = window.location.pathname || '/';
+            renderPage(path);
+        }
+
+        // Initialize on load
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', init);
+        } else {
+            init();
+        }
+    </script>
+</body>
+</html>
